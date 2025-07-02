@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="students.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background: #f9f9f9;
+    }
+    .layout {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 8px 0;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .card-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    .blue-card {
+      background: #007bff;
+      color: white;
+      padding: 40px;
+      border-radius: 12px;
+      font-size: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    .blue-card:hover {
+      background: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <h3>Dashboard</h3>
+      <a href="dashboard.html">Home</a>
+      <a href="students.html">Students Fund</a>
+      <a href="class-fund.html">Class Fund</a>
+      <a href="print.html">Print Records</a>
+      <a href="total.html">total Amount</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h2>Dashboard</h2>
+      <div class="card-grid">
+        <div class="blue-card" onclick="location.href='class-fund.html'">Class Fund</div>
+        <div class="blue-card" onclick="location.href='students.html'">Students Fund</div>
+        <div class="blue-card" onclick="location.href='print.html'">Print Records</div>
+        <div class="blue-card">Total Fund</div>
+      </div>
+    </div>
+  </div>
+  <script>
+    function computeTotalFund() {
+      let studentTotal = 0;
+      let classTotal = 0;
+      let otherTotal = 0;
+    
+      // Sum all student balances
+      students.forEach(s => {
+        const entries = JSON.parse(localStorage.getItem(`student_${s.adno}`)) || [];
+        entries.forEach(e => {
+          studentTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+        });
+      });
+    
+      // Sum class fund
+      const classEntries = JSON.parse(localStorage.getItem('class_fund')) || [];
+      classEntries.forEach(e => {
+        classTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+      });
+    
+      // Example: other fund stored under 'other_fund' key or use fallback
+      const otherEntries = JSON.parse(localStorage.getItem('other_fund')) || [];
+      otherEntries.forEach(e => {
+        otherTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+      });
+    
+      const total = studentTotal + classTotal + otherTotal;
+    
+      document.getElementById('studentAmount').textContent = `₹${studentTotal}`;
+      document.getElementById('classAmount').textContent = `₹${classTotal}`;
+      document.getElementById('otherAmount').textContent = `₹${otherTotal}`;
+      document.getElementById('totalAmount').textContent = `₹${total}`;
+    }
+    
+    window.onload = computeTotalFund;
+    </script>
+    
+</body>
+</html>

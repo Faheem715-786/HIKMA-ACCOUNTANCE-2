@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Class Fund</title>
+  <script src="students.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f9f9f9; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 8px 0;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    input, select, button { margin: 6px; padding: 6px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <div class="sidebar">
+    <h3>Dashboard</h3>
+    <a href="dashboard.html">Home</a>
+    <a href="students.html">Students Fund</a>
+    <a href="class-fund.html">Class Fund</a>
+    <a href="print.html">Print Records</a>
+    <a href="total.html">Total Fund</a>
+  </div>
+
+  <div class="content">
+    <h2>Class Fund</h2>
+    <form id="entryForm">
+      <select id="adno" required></select>
+      <input type="date" id="date" required>
+      <input type="text" id="reason" placeholder="Reason" required>
+      <input type="number" id="income" placeholder="Income">
+      <input type="number" id="outcome" placeholder="Outcome">
+      <button type="submit">Save</button>
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>SI No</th>
+          <th>Ad No</th>
+          <th>Date</th>
+          <th>Reason</th>
+          <th>Income</th>
+          <th>Outcome</th>
+          <th>Balance</th>
+        </tr>
+      </thead>
+      <tbody id="entryTable"></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+const adnoSelect = document.getElementById("adno");
+students.forEach(s => {
+  const opt = document.createElement("option");
+  opt.value = s.adno;
+  opt.textContent = `${s.adno} - ${s.name}`;
+  adnoSelect.appendChild(opt);
+});
+
+const table = document.getElementById("entryTable");
+const form = document.getElementById("entryForm");
+let entries = [];
+
+function renderTable() {
+  table.innerHTML = "";
+  let balance = 0;
+  entries.forEach((e, i) => {
+    balance += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+    table.innerHTML += `
+      <tr>
+        <td>${i + 1}</td>
+        <td>${e.adno}</td>
+        <td>${e.date}</td>
+        <td>${e.reason}</td>
+        <td>${e.income || '-'}</td>
+        <td>${e.outcome || '-'}</td>
+        <td>${balance}</td>
+      </tr>`;
+  });
+}
+
+async function loadEntries() {
+  const res = await fetch(`/class-fund`);
+  entries = await res.json();
+  renderTable();
+}
+
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const entry = {
+    adno: adno.value,
+    date: date.value,
+    reason: reason.value,
+    income: income.value,
+    outcome: outcome.value
+  };
+  await fetch(`/class-fund`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry)
+  });
+  form.reset();
+  loadEntries();
+};
+
+loadEntries();
+</script>
+</body>
+</html>

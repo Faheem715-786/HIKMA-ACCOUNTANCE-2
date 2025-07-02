@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Students Fund</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="students.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f9f9f9; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 8px 0;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+    .student-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .student-list a {
+      padding: 8px 12px;
+      background: #eee;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <h3>Dashboard</h3>
+      <a href="dashboard.html">Home</a>
+      <a href="students.html">Students Fund</a>
+      <a href="class-fund.html">Class Fund</a>
+      <a href="print.html">Print Records</a>
+      <a href="total.html">Total Fund</a>
+    </div>
+    <div class="content">
+      <h2>All Students</h2>
+      <div class="student-list" id="studentList"></div>
+    </div>
+  </div>
+
+  <script>
+    const container = document.getElementById("studentList");
+    const sortedStudents = [...students].sort((a, b) => a.adno - b.adno);
+    sortedStudents.forEach(s => {
+      const link = document.createElement("a");
+      link.href = `student.html?adno=${s.adno}`;
+      link.textContent = `${s.adno} - ${s.name}`;
+      container.appendChild(link);
+    });
+  </script>
+</body>
+</html>

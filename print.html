@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Print Records</title>
+  <script src="students.js"></script>
+  <style>
+    body { font-family: sans-serif; margin: 0; background: #f9f9f9; }
+    .layout { display: flex; min-height: 100vh; }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 8px 0;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+    }
+    select, input, button { margin: 5px; padding: 6px; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #007bff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <h3>Dashboard</h3>
+      <a href="dashboard.html">Home</a>
+      <a href="students.html">Students Fund</a>
+      <a href="class-fund.html">Class Fund</a>
+      <a href="print.html">Print Records</a>
+      <a href="total.html">Total Fund</a>
+    </div>
+    <div class="content">
+      <h2>Print Records</h2>
+
+      <h3>Student Fund</h3>
+      <select id="studentSelect"></select>
+      <input type="month" id="studentMonth">
+      <button onclick="loadStudent()">Load</button>
+
+      <h3>Class Fund</h3>
+      <input type="month" id="classMonth">
+      <button onclick="loadClass()">Load</button>
+
+      <table>
+        <thead>
+          <tr>
+            <th>SI No</th>
+            <th>Date</th>
+            <th>Reason</th>
+            <th>Income</th>
+            <th>Outcome</th>
+            <th>Balance</th>
+          </tr>
+        </thead>
+        <tbody id="printTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const sel = document.getElementById('studentSelect');
+    students.forEach(s => {
+      sel.innerHTML += `<option value="${s.adno}">${s.adno} - ${s.name}</option>`;
+    });
+
+    function render(entries) {
+      const tbody = document.getElementById('printTable');
+      tbody.innerHTML = '';
+      let balance = 0;
+      entries.forEach((e, i) => {
+        balance += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+        tbody.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${e.date}</td>
+            <td>${e.reason}</td>
+            <td>${e.income || '-'}</td>
+            <td>${e.outcome || '-'}</td>
+            <td>${balance}</td>
+          </tr>`;
+      });
+    }
+
+    function loadStudent() {
+      const adno = sel.value;
+      const month = document.getElementById('studentMonth').value;
+      let entries = JSON.parse(localStorage.getItem(`student_${adno}`)) || [];
+      entries = entries.filter(e => e.date.startsWith(month));
+      render(entries);
+    }
+
+    function loadClass() {
+      const month = document.getElementById('classMonth').value;
+      let entries = JSON.parse(localStorage.getItem('class_fund')) || [];
+      entries = entries.filter(e => e.date.startsWith(month));
+      render(entries);
+    }
+  </script>
+</body>
+</html>

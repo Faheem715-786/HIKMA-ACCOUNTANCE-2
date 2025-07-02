@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Total Fund</title>
+  <script src="students.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      background: #f5f5f5;
+    }
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .sidebar {
+      width: 200px;
+      background: #333;
+      color: white;
+      padding: 20px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      margin: 10px 0;
+    }
+    .content {
+      flex: 1;
+      padding: 30px;
+      background: #fff;
+    }
+    .card {
+      padding: 20px;
+      margin-bottom: 15px;
+      background: #e9ecef;
+      border-left: 6px solid #007bff;
+      font-size: 16px;
+    }
+    .card.total {
+      border-left-color: #28a745;
+      font-weight: bold;
+      background: #d4edda;
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="sidebar">
+      <a href="dashboard.html">Home</a>
+      <a href="students.html">Students Fund</a>
+      <a href="class-fund.html">Class Fund</a>
+      <a href="print.html">Print Records</a>
+      <a href="total.html">Total Fund</a>
+    </div>
+    <div class="content">
+      <h2>Total Fund Overview</h2>
+      <div class="card" id="studentFund">Students Fund: ₹0</div>
+      <div class="card" id="classFund">Class Fund: ₹0</div>
+      <div class="card" id="otherFund">Other Fund: ₹0</div>
+      <div class="card total" id="totalFund">Total: ₹0</div>
+    </div>
+  </div>
+
+  <script>
+    let studentTotal = 0;
+    let classTotal = 0;
+    let otherTotal = 0;
+
+    // Sum student entries
+    students.forEach(s => {
+      const entries = JSON.parse(localStorage.getItem('student_' + s.adno)) || [];
+      entries.forEach(e => {
+        studentTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+      });
+    });
+
+    // Sum class fund
+    const classEntries = JSON.parse(localStorage.getItem('class_fund')) || [];
+    classEntries.forEach(e => {
+      classTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+    });
+
+    // Sum other fund
+    const otherEntries = JSON.parse(localStorage.getItem('other_fund')) || [];
+    otherEntries.forEach(e => {
+      otherTotal += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+    });
+
+    const grandTotal = studentTotal + classTotal + otherTotal;
+
+    document.getElementById('studentFund').textContent = 'Students Fund: ₹' + studentTotal;
+    document.getElementById('classFund').textContent = 'Class Fund: ₹' + classTotal;
+    document.getElementById('otherFund').textContent = 'Other Fund: ₹' + otherTotal;
+    document.getElementById('totalFund').textContent = 'Total: ₹' + grandTotal;
+  </script>
+</body>
+</html>

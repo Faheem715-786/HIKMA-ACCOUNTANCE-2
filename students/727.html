@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Fund - 727
+  </title>
+  <script src="../students.js"></script>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    input, button { margin: 5px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
+    th { background: #007bff; color: white; }
+  </style>
+</head>
+<body>
+  <h2 id="title">Student Fund</h2>
+  <form id="entryForm">
+    <input type="date" id="date" required>
+    <input type="text" id="reason" placeholder="Reason" required>
+    <input type="number" id="income" placeholder="Income">
+    <input type="number" id="outcome" placeholder="Outcome">
+    <button type="submit">Save</button>
+  </form>
+  <table>
+    <thead>
+      <tr>
+        <th>SI No</th>
+        <th>Date</th>
+        <th>Reason</th>
+        <th>Income</th>
+        <th>Outcome</th>
+        <th>Balance</th>
+      </tr>
+    </thead>
+    <tbody id="entryTable"></tbody>
+  </table>
+  <script>
+    const adno = 708;
+    const student = students.find(s => s.adno === adno);
+    document.getElementById("title").textContent = `Fund - ${student.name} (${adno})`;
+
+    const form = document.getElementById('entryForm');
+    const tbody = document.getElementById('entryTable');
+    let entries = JSON.parse(localStorage.getItem(`student_${adno}`)) || [];
+
+    function render() {
+      tbody.innerHTML = '';
+      let balance = 0;
+      entries.forEach((e, i) => {
+        balance += (parseInt(e.income) || 0) - (parseInt(e.outcome) || 0);
+        tbody.innerHTML += `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${e.date}</td>
+            <td>${e.reason}</td>
+            <td>${e.income || '-'}</td>
+            <td>${e.outcome || '-'}</td>
+            <td>${balance}</td>
+          </tr>
+        `;
+      });
+    }
+
+    form.onsubmit = (e) => {
+      e.preventDefault();
+      const entry = {
+        date: date.value,
+        reason: reason.value,
+        income: income.value,
+        outcome: outcome.value
+      };
+      entries.push(entry);
+      localStorage.setItem(`student_${adno}`, JSON.stringify(entries));
+      form.reset();
+      render();
+    };
+
+    render();
+  </script>
+</body>
+</html>
