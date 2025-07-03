@@ -63,12 +63,13 @@
       const error = document.getElementById('errorMsg');
 
       if (user === 'admin' && pass === 'admin123') {
-        window.location.href = 'index.html'; // Redirect to the main page
+        window.location.href = 'dashboard.html'; // Redirect to the main page
       } else if (user === '' || pass === '') {
         error.textContent = "Username and password cannot be empty";
       } else {
         error.textContent = "Invalid username or password";
       }
+      error.style.display = error.textContent ? 'block' : 'none';
     }
   </script>
 </body>
